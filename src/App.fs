@@ -1,47 +1,37 @@
 module App
 
-(**
- - title: Counter
- - tagline: The famous Increment/Decrement ported from Elm
-*)
-
+open Fable.Core.JsInterop
 open Fable.Core
 open Fable.Import
 open Elmish
+open Fable
 
-// MODEL
+open Data
+open Model
+open Views
 
-type Model = int
-
-type Msg =
-| Increment
-| Decrement
-
-let init() : Model = 0
+let init() : Model = Welcome
 
 // UPDATE
-
 let update (model:Model) = function
-    | Increment -> model + 1
-    | Decrement -> model - 1
+  | Start -> Step 1
+  | Forward -> 
+    match model with
+      | Step x when x < steps.Length -> Step (x + 1)
+      | Step x when x = steps.Length -> Finish
+      | _ -> Welcome
+  | Backward -> 
+    match model with 
+      | Step x when x > 1 -> Step (x - 1)
+      | _ -> Welcome
 
-open Fable.Core.JsInterop
-open Fable.Helpers.React.Props
-module R = Fable.Helpers.React
 
-// VIEW (rendered with React)
-
-let view dispatch model =
-
-  R.div []
-      [ R.button [ OnClick (fun _ -> dispatch Decrement) ] [ R.str "-" ]
-        R.div [] [ R.str (sprintf "%A" model) ]
-        R.button [ OnClick (fun _ -> dispatch Increment) ] [ R.str "+" ] ]
-
+let styles: obj = importAll "./styles.sass"
+ 
 open Elmish.React
 
 // App
 Program.mkSimple init update view
 |> Program.withConsoleTrace
-|> Program.withReact "elmish-app"
+|> Program.withReact "app"
 |> Program.run

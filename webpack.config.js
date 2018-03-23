@@ -16,7 +16,10 @@ var babelOptions = fableUtils.resolveBabelOptions({
 
 module.exports = (env, argv) => ({
   devtool: "source-map",
-  entry: resolve('./src/FableElmReactApp.fsproj'),
+  entry:  {
+    //js: resolve('./src/app.js'),
+    fsproj: resolve('./src/StopAnxiety.fsproj'),
+  },
   devServer: {
     contentBase: resolve('dist'),
     port: 8080

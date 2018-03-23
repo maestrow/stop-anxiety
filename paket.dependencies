@@ -5,3 +5,4 @@ nuget Fable.Core
 nuget Fable.Elmish >= 2.0.0-beta-2
 nuget Fable.Elmish.React >= 2.0.0-beta-2
 nuget Fable.Import.Browser
+nuget Fulma
