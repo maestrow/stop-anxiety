@@ -1,8 +1,0 @@
-.paket/paket.exe
-.paket/paket.bootstrapper.exe
-paket-files
-node_modules
-public
-bin
-obj
-/output
