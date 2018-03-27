@@ -15,7 +15,7 @@ open Fulma.Elements.Form
 
 let welcome dispatch = 
   section [ Class "section is-flex is-horizontal-centered"
-            Style [ FlexDirection "column"; JustifyContent "center"; Height "100vh" ]]
+            Style [ JustifyContent "center"; ]]
       [ div [ Class "box my-panel"
               Style [Padding "50px"]]
           [ div [ Class "title has-text-centered" ]
