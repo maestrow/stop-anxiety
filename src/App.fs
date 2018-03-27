@@ -8,22 +8,38 @@ open Fable
 
 open Data
 open Model
-open Views
+open Views.Steps
+open Views.Welcome
+open Views.Finish
 
-let init() : Model = Welcome
+let init() : Model = { currentPos = Welcome; answers = List.init steps.Length (fun _ -> "") }
 
 // UPDATE
 let update (model:Model) = function
-  | Start -> Step 1
+  | Start -> { model with currentPos = Step 1 }
+  | UpdateAnswer answer -> 
+    let step = match model.currentPos with
+                | Welcome | Finish -> failwith "Unexpected message"
+                | Step step -> step
+    let newAnswers = model.answers |> List.mapi (fun i v -> if i = step-1 then answer else v)
+    { model with answers = newAnswers }
   | Forward -> 
-    match model with
-      | Step x when x < steps.Length -> Step (x + 1)
-      | Step x when x = steps.Length -> Finish
-      | _ -> Welcome
+    match model.currentPos with
+      | Step x when x < steps.Length -> { model with currentPos = Step (x + 1) }
+      | Step x when x = steps.Length -> { model with currentPos = Finish }
+      | _ -> init ()
   | Backward -> 
-    match model with 
-      | Step x when x > 1 -> Step (x - 1)
-      | _ -> Welcome
+    match model.currentPos with 
+      | Step x when x > 1 -> { model with currentPos = Step (x - 1) }
+      | _ -> init ()
+
+let view dispatch (model: Model) =
+  match model.currentPos with
+  | Welcome -> welcome dispatch
+  | Model.Step s -> 
+    printfn "step: %d; answer: '%s'" s (model.answers.[s-1])
+    stepTpl dispatch s (model.answers.[s-1])
+  | Finish -> finish dispatch model
 
 
 let styles: obj = importAll "./styles.sass"
