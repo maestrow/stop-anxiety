@@ -3,6 +3,7 @@ module Views.Finish
 module P = Fable.Helpers.React.Props
 module R = Fable.Helpers.React
 
+open Fable.Core.JsInterop
 open Fulma
 open Fulma.Layouts
 open Fulma.Elements
@@ -33,16 +34,19 @@ module private Impl =
       Helpers.subtitle "Вы можете отправить ответы себе или вашему психологу"
       Field.div [] [
         Label.label [ Label.For "name" ] [ R.str "Ваше имя (псевдоним)" ]
-        Input.input [ Input.Id "name"; Input.Placeholder "Ваше имя" ]
+        Input.input [ Input.Id "name"; Input.Placeholder "Ваше имя"; Input.Props [ P.OnBlur (fun e -> !!e.target?value |> UpdateName |> dispatch) ] ]
         Label.label [ Label.For "email" ] [ R.str "Куда отправить ответы" ]
-        Input.input [ Input.Id "email"; Input.Placeholder "mail@example.com" ]
+        Input.input [ Input.Id "email"; Input.Placeholder "mail@example.com"; Input.Props [ P.OnBlur (fun e -> !!e.target?value |> UpdateEmail |> dispatch) ] ]
       ]
       Level.level [] [
         Level.left [] [
-          R.a [P.Href "#"] [R.str "В начало"]
+          R.a [P.Href "#"; P.OnClick (fun _ -> dispatch Msg.Start)] [R.str "В начало"]
         ]
         Level.item [] [
-          Button.a [ Button.CustomClass "is-primary is-large" ] [ R.str "Далее" ]
+          Button.a [ 
+            Button.Props [ P.OnClick (fun _ -> dispatch SendEmail) ]; 
+            Button.CustomClass "is-primary is-large" ] 
+            [ R.str "Отправить" ]
         ]
       ]
     ]

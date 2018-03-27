@@ -1,10 +1,9 @@
 module App
 
-open Fable.Core.JsInterop
 open Fable.Core
-open Fable.Import
+open Fable.Core.JsInterop
+open Fable.Import.Browser
 open Elmish
-open Fable
 
 open Data
 open Model
@@ -12,11 +11,27 @@ open Views.Steps
 open Views.Welcome
 open Views.Finish
 
-let init() : Model = { currentPos = Welcome; answers = List.init steps.Length (fun _ -> "") }
+let init() : Model = { currentPos = Welcome; fromName = ""; email = ""; answers = List.init steps.Length (fun _ -> "") }
+
+[<Emit("emailjs.send('default_service', 'template_rRh1tuIp', $0)")>]
+let sendMail data: unit = jsNative
+
+[<Emit("window.open($0)")>]
+let windowOpen url: obj = jsNative
+
+[<Emit("encodeURIComponent($0)")>]
+let encodeURIComponent arg: string = jsNative
+
+let getMailBody (answers: string list) = 
+  let toString (i, q, a) = sprintf "%d. %s\n%s\n" i q a
+  steps
+  |> List.mapi (fun i (q, _, _) -> i+1, q, answers.[i])
+  |> List.map toString
+  |> String.concat "\n"
 
 // UPDATE
 let update (model:Model) = function
-  | Start -> { model with currentPos = Step 1 }
+  | Start -> init () |> (fun m -> { m with currentPos = Step 1 })
   | UpdateAnswer answer -> 
     let step = match model.currentPos with
                 | Welcome | Finish -> failwith "Unexpected message"
@@ -32,6 +47,13 @@ let update (model:Model) = function
     match model.currentPos with 
       | Step x when x > 1 -> { model with currentPos = Step (x - 1) }
       | _ -> init ()
+  | UpdateName name -> { model with fromName = name }
+  | UpdateEmail email -> { model with email = email }
+  | SendEmail ->
+    let subject = sprintf "[Stop Anxiety] Ответы от %s" model.fromName
+    let body = getMailBody model.answers |> encodeURIComponent
+    windowOpen (sprintf "mailto:%s?subject=%s&body=%s" model.email subject body) |> ignore
+    model
 
 let view dispatch (model: Model) =
   match model.currentPos with

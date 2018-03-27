@@ -4,7 +4,7 @@ const fableUtils = require("fable-utils");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 function resolve(filePath) {
     return path.join(__dirname, filePath)
@@ -26,6 +26,7 @@ var babelOptions = fableUtils.resolveBabelOptions({
 });
 
 var commonPlugins = [
+    new CleanWebpackPlugin('output/*'),
     new HtmlWebpackPlugin({
         filename: resolve('./output/index.html'),
         template: resolve('./src/index.html')
@@ -77,9 +78,9 @@ module.exports = {
     plugins: isProduction ?
         commonPlugins.concat([
             new ExtractTextPlugin('style.[contenthash].css'),
-            new CopyWebpackPlugin([
-                { from: './public' }
-            ]),
+            // new CopyWebpackPlugin([
+            //     { from: './public' }
+            // ]),
             // ensure that we get a production build of any dependencies
             // this is primarily for React, where this removes 179KB from the bundle
             new webpack.DefinePlugin({

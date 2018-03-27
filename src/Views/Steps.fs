@@ -26,21 +26,21 @@ let stepTpl dispatch (step: int) (currentAnswer: string) =
         Helpers.subtitle idea
         Content.content [] [ R.str comment ]
         Field.div [] [
-          R.input
-            [ 
-              P.Value currentAnswer
-              P.Placeholder "Ответ" 
-              P.OnChange (fun e -> !!e.target?value |> UpdateAnswer |> dispatch)
-            ]
-          // Textarea.textarea [ Textarea.Props 
-          //   [
-          //     P.Cols 30.
-          //     P.Rows 10.
+          // R.input
+          //   [ 
           //     P.Value currentAnswer
           //     P.Placeholder "Ответ" 
           //     P.OnChange (fun e -> !!e.target?value |> UpdateAnswer |> dispatch)
-          //   ]] []
-          R.p [] [R.str (sprintf "step: %d; currentAnswer: '%s'" step currentAnswer + "'")]
+          //   ]
+          Textarea.textarea [ Textarea.Props 
+            [
+              P.Cols 30.
+              P.Rows 10.
+              P.Value currentAnswer
+              P.Placeholder "Ответ" 
+              P.OnChange (fun e -> !!e.target?value |> UpdateAnswer |> dispatch)
+            ]] []
+          //R.p [] [R.str (sprintf "step: %d; currentAnswer: '%s'" step currentAnswer + "'")]
         ]
         Level.level [] [
           Level.left [] [ R.a [ P.OnClick (fun _ -> dispatch Backward) ] [R.str "Назад"] ]

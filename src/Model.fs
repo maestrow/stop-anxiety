@@ -5,6 +5,8 @@ type Model =
   {
     currentPos: Position
     answers: string list
+    fromName: string
+    email: string
   }
 and Position = 
   | Welcome
@@ -16,3 +18,6 @@ type Msg =
   | UpdateAnswer of string
   | Forward
   | Backward
+  | UpdateName of string
+  | UpdateEmail of string
+  | SendEmail
